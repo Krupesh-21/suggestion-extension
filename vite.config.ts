@@ -1,12 +1,12 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path, { resolve } from 'path';
-import makeManifest from './utils/plugins/make-manifest';
-import customDynamicImport from './utils/plugins/custom-dynamic-import';
+import { defineConfig } from 'vite';
 import addHmr from './utils/plugins/add-hmr';
-import watchRebuild from './utils/plugins/watch-rebuild';
+import customDynamicImport from './utils/plugins/custom-dynamic-import';
 import inlineVitePreloadScript from './utils/plugins/inline-vite-preload-script';
+import makeManifest from './utils/plugins/make-manifest';
+import watchRebuild from './utils/plugins/watch-rebuild';
 
 const rootDir = resolve(__dirname);
 const srcDir = resolve(rootDir, 'src');
@@ -31,6 +31,7 @@ export default defineConfig({
       '@pages': pagesDir,
     },
   },
+  envDir: 'environments',
   plugins: [
     makeManifest({
       getCacheInvalidationKey,

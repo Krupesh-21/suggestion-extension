@@ -14,17 +14,19 @@
     "build:firefox:watch": "cross-env __DEV__=true __FIREFOX__=true vite build -w --mode development",
     "build:hmr": "rollup --config utils/reload/rollup.config.mjs",
     "wss": "node utils/reload/initReloadServer.js",
-    "dev": "pnpm build:hmr && (run-p wss build:watch)",
-    "dev:firefox": "pnpm build:hmr && (run-p wss build:firefox:watch)",
+    "dev": "npm run build:hmr && (run-p wss build:watch)",
+    "dev:firefox": "npm build:hmr && (run-p wss build:firefox:watch)",
     "test": "vitest",
     "commitlint": "commitlint --edit",
     "lint": "eslint src --ext .ts,.js,.tsx,.jsx",
-    "lint:fix": "pnpm lint --fix",
+    "lint:fix": "npm lint --fix",
     "prettier": "prettier . --write",
     "prepare": "husky install"
   },
   "type": "module",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.0.0",
+    "@google/generative-ai": "^0.2.0",
     "construct-style-sheets-polyfill": "3.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -73,6 +75,5 @@
       "prettier --write",
       "eslint --fix"
     ]
-  },
-  "packageManager": "pnpm@8.9.2"
+  }
 }
