@@ -9,18 +9,29 @@ export default function App() {
     const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
+    const history = [
+      {
+        role: 'user',
+        parts: messages.map(item => ({ text: item.text })),
+      },
+      {
+        role: 'model',
+        parts: [{ text: 'hi' }],
+      },
+    ];
+
     const chat = model.startChat({
       generationConfig: {
         maxOutputTokens: 10000,
       },
+      history,
     });
 
     try {
       const result = await chat.sendMessage(
-        'Suggest only 3 to 5 responses with only 40 characters in numbered list form considering last message based on these conversation between two users.' +
-          '\n' +
-          messages.map(item => item.text).join('\n'),
+        'Suggest only 3 to 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users. and do not include character count in your response and in numbered list strictly.',
       );
+
       const response = await result.response;
       const text = await response.text();
 
@@ -88,7 +99,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log('content view loaded');
     const targetNode = document.body;
 
     // Options for the observer (which mutations to observe)
@@ -96,22 +106,12 @@ export default function App() {
 
     // Callback function to execute when mutations are observed
     const callback = mutationList => {
-      const isPnaelLoaded = mutationList.some(item => {
-        // console.log(item.target, item.target.id === 'chat-pane-list' && item.target.id !== 'ai-suggestion', 'raj');
-        console.log(item.target.id);
-        if (item.target.id === 'chat-pane-list' && item.target.id !== 'ai-suggesstion') {
-          console.log(
-            Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]')),
-            'some condtion check',
-          );
-        }
-
-        return (
+      const isPnaelLoaded = mutationList.some(
+        item =>
           item.target.id === 'chat-pane-list' &&
           item.target.id !== 'ai-suggesstion' &&
-          Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]')).length > 0
-        );
-      });
+          Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]')).length > 0,
+      );
 
       if (isPnaelLoaded && !isLoaded) setIsLoaded(isPnaelLoaded);
     };
@@ -124,12 +124,9 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log({ isLoaded });
-
     if (isLoaded) {
       const messages = Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]'));
       let newMessages = [];
-      console.log(messages, messages.length, messages.length > 10, 'raj');
 
       if (messages.length > 10) {
         newMessages = messages.slice(Math.max(messages.length - 10, 0));
@@ -142,8 +139,6 @@ export default function App() {
           self: item.classList.contains('fui-ChatMyMessage__body'),
         };
       });
-
-      console.log(newMessages, newMessages[newMessages.length - 1] != null, !newMessages[newMessages.length - 1]?.self);
 
       if (newMessages[newMessages.length - 1] != null && !newMessages[newMessages.length - 1]?.self) {
         generateResponse(newMessages);
