@@ -59,6 +59,9 @@ export default function App() {
           if (el) {
             navigator.clipboard.writeText((e.target as HTMLElement).innerText);
             (el as HTMLElement).focus();
+            (e.target as HTMLElement).innerHTML = '&check;' + ' Copied' + (e.target as HTMLElement).innerText;
+
+            setTimeout(() => div.remove(), 1000);
           }
 
           // const sendButton = document.querySelector('[data-tid="newMessageCommands-send"]');
