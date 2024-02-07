@@ -17,7 +17,7 @@ export default function App() {
 
     try {
       const result = await chat.sendMessage(
-        'Suggest only 3 to 5 responses in numbered bullet form considering last message based on these conversation between two users.' +
+        'Suggest only 3 to 5 responses with only 40 characters in numbered list form considering last message based on these conversation between two users.' +
           '\n' +
           messages.map(item => item.text).join('\n'),
       );
@@ -46,7 +46,7 @@ export default function App() {
         const button = document.createElement('button');
         button.innerText = item;
         button.className =
-          'fui-Button r1alrhcs ___m0y6240 f3c24fr f1g0x7ka fw6w4fj f1qch9an fb5u4ab f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc fl43uef fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7 f1hu3pq6 f1nnb54t f1yrx710 ft1hn21 fuxngvv fkswwiz fz5stix f1c6jg8l f6z23yc f17aye20 f1u8pn5z f16muhyy f1couhl3 fjc5sf5 fenegdw frvze4h f15wnd8a f1d7uzvz f51d5ct f3q8k0u f139oj5f fzrd9l2 f19b6rc1 fx7oyu6 f784lqe f1h648pw f7tkmfy foky84l f7u1hbh fy8dw04 fuspmkf fbmy5og f1bpdera fs23r2p f15himi8 fah1kgb f11pwudj fbr7jg7 f75pg3s f1aaoui7 f1xnd9hs f1cw7fiu ft1dyul f4ceeba f1gjv7df';
+          'fui-Button r1alrhcs ___m0y6240 f3c24fr f1g0x7ka fw6w4fj f1qch9an fb5u4ab f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc fl43uef fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7 f1hu3pq6 f1nnb54t f1yrx710 ft1hn21 fuxngvv fkswwiz f1c6jg8l f6z23yc f17aye20 f1u8pn5z f16muhyy f1couhl3 fjc5sf5 fenegdw frvze4h f15wnd8a f1d7uzvz f51d5ct f3q8k0u f139oj5f fzrd9l2 f19b6rc1 fx7oyu6 f784lqe f1h648pw f7tkmfy foky84l f7u1hbh fy8dw04 fuspmkf fbmy5og f1bpdera fs23r2p f15himi8 fah1kgb f11pwudj fbr7jg7 f75pg3s f1aaoui7 f1xnd9hs f1cw7fiu ft1dyul f4ceeba f1gjv7df';
         button.dataset.track = 'false';
         button.dataset.tabster = '{ restorer: { type: 1 } }';
         button.id = `menu${i}`;
@@ -96,9 +96,22 @@ export default function App() {
 
     // Callback function to execute when mutations are observed
     const callback = mutationList => {
-      const isPnaelLoaded = mutationList.some(
-        item => item.target.id === 'chat-pane-list' && item.target.id !== 'ai-suggestion',
-      );
+      const isPnaelLoaded = mutationList.some(item => {
+        // console.log(item.target, item.target.id === 'chat-pane-list' && item.target.id !== 'ai-suggestion', 'raj');
+        console.log(item.target.id);
+        if (item.target.id === 'chat-pane-list' && item.target.id !== 'ai-suggesstion') {
+          console.log(
+            Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]')),
+            'some condtion check',
+          );
+        }
+
+        return (
+          item.target.id === 'chat-pane-list' &&
+          item.target.id !== 'ai-suggesstion' &&
+          Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]')).length > 0
+        );
+      });
 
       if (isPnaelLoaded && !isLoaded) setIsLoaded(isPnaelLoaded);
     };
@@ -111,9 +124,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    console.log({ isLoaded });
+
     if (isLoaded) {
       const messages = Array.from(document.body.querySelectorAll('[data-tid="chat-pane-message"]'));
       let newMessages = [];
+      console.log(messages, messages.length, messages.length > 10, 'raj');
+
       if (messages.length > 10) {
         newMessages = messages.slice(Math.max(messages.length - 10, 0));
       }
@@ -125,6 +142,8 @@ export default function App() {
           self: item.classList.contains('fui-ChatMyMessage__body'),
         };
       });
+
+      console.log(newMessages, newMessages[newMessages.length - 1] != null, !newMessages[newMessages.length - 1]?.self);
 
       if (newMessages[newMessages.length - 1] != null && !newMessages[newMessages.length - 1]?.self) {
         generateResponse(newMessages);
