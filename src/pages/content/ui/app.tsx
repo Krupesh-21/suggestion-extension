@@ -1,4 +1,3 @@
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useEffect, useState } from 'react';
 
@@ -29,7 +28,7 @@ export default function App() {
 
     try {
       const result = await chat.sendMessage(
-        'Suggest only 3 to 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users. and do not include character count in your response and in numbered list strictly.',
+        'Suggest only 3 to 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users and strictly give oonly numbered list without any other string.',
       );
 
       const response = await result.response;
@@ -38,7 +37,7 @@ export default function App() {
       const suggestion = text
         .split('\n')
         .filter(item => item.trim() !== '')
-        .map(str => str.replace(/^\d+\.\s*/, ''));
+        .map(str => str.replace(/^\d+\.\s*/, '').replace(/\s*\(\d+ characters\)$/, ''));
 
       // Send the response back to the content.js script
 
