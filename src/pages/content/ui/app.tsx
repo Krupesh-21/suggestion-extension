@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useEffect, useState } from 'react';
+import validator from 'validator';
 
 export default function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -28,7 +29,7 @@ export default function App() {
 
     try {
       const result = await chat.sendMessage(
-        'Suggest max 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users and strictly give oonly numbered list without any other string.',
+        'Suggest max 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users and strictly give only numbered list without any other string.',
       );
 
       const response = await result.response;
@@ -140,9 +141,19 @@ export default function App() {
         };
       });
 
+      const urlRegex = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g;
+
+      newMessages = newMessages.filter(
+        item =>
+          !(validator.isURL(item.text) || item.text.match(urlRegex)) &&
+          !validator.isCreditCard(item.text) &&
+          !validator.isMACAddress(item.text) &&
+          !validator.isStrongPassword(item.text),
+      );
+
       if (newMessages[newMessages.length - 1] != null) {
-        const isMyMessageLast = newMessages[newMessages.length - 1]?.self;
-        if (!isMyMessageLast) {
+        const isMyMessageInLast = newMessages[newMessages.length - 1]?.self;
+        if (!isMyMessageInLast) {
           generateResponse(newMessages);
         } else {
           if (document.getElementById('ai-suggestion')) {
