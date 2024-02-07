@@ -15,7 +15,7 @@ export default function App() {
       },
       {
         role: 'model',
-        parts: [{ text: 'hi' }],
+        parts: [{ text: '' }],
       },
     ];
 
@@ -28,7 +28,7 @@ export default function App() {
 
     try {
       const result = await chat.sendMessage(
-        'Suggest only 3 to 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users and strictly give oonly numbered list without any other string.',
+        'Suggest max 5 responses with only 50 characters in numbered list form considering last message based on these conversation between two users and strictly give oonly numbered list without any other string.',
       );
 
       const response = await result.response;
@@ -51,6 +51,7 @@ export default function App() {
       div.style.margin = '5px 0';
       div.style.gap = '5px';
       div.style.flexWrap = 'wrap';
+      div.style.justifyContent = 'flex-end';
 
       suggestion.forEach((item, i) => {
         const button = document.createElement('button');
@@ -139,8 +140,16 @@ export default function App() {
         };
       });
 
-      if (newMessages[newMessages.length - 1] != null && !newMessages[newMessages.length - 1]?.self) {
-        generateResponse(newMessages);
+      if (newMessages[newMessages.length - 1] != null) {
+        const isMyMessageLast = newMessages[newMessages.length - 1]?.self;
+        if (!isMyMessageLast) {
+          generateResponse(newMessages);
+        } else {
+          if (document.getElementById('ai-suggestion')) {
+            document.getElementById('ai-suggestion').remove();
+          }
+          setIsLoaded(false);
+        }
       }
     }
   }, [isLoaded]);
